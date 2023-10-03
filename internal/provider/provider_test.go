@@ -47,6 +47,54 @@ var providerFactories = map[string]func() (*schema.Provider, error){
 		}
 		return provider, nil
 	},
+	"remotehost-through-nonexistent": func() (*schema.Provider, error) {
+		provider := New("dev")()
+		configureProvider := provider.ConfigureContextFunc
+		provider.ConfigureContextFunc = func(c context.Context, rd *schema.ResourceData) (interface{}, diag.Diagnostics) {
+			rd.Set("conn", []interface{}{
+				map[string]interface{}{
+					"host":     "remotehost",
+					"user":     "root",
+					"password": "password",
+					"port":     1022,
+				},
+			})
+			rd.Set("proxy_conn", []interface{}{
+				map[string]interface{}{
+					"host":     "nonexistent",
+					"user":     "root",
+					"password": "password",
+					"port":     22,
+				},
+			})
+			return configureProvider(c, rd)
+		}
+		return provider, nil
+	},
+	"remotehost-through-remotehost2": func() (*schema.Provider, error) {
+		provider := New("dev")()
+		configureProvider := provider.ConfigureContextFunc
+		provider.ConfigureContextFunc = func(c context.Context, rd *schema.ResourceData) (interface{}, diag.Diagnostics) {
+			rd.Set("conn", []interface{}{
+				map[string]interface{}{
+					"host":     "remotehost",
+					"user":     "root",
+					"password": "password",
+					"port":     1022,
+				},
+			})
+			rd.Set("proxy_conn", []interface{}{
+				map[string]interface{}{
+					"host":     "remotehost2",
+					"user":     "root",
+					"password": "password",
+					"port":     22,
+				},
+			})
+			return configureProvider(c, rd)
+		}
+		return provider, nil
+	},
 }
 
 func TestProvider(t *testing.T) {
