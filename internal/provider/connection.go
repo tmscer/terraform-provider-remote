@@ -81,17 +81,25 @@ func ConnectionFromResourceData(ctx context.Context, d *schema.ResourceData) (st
 		return "", nil, fmt.Errorf("resouce does not have a connection configured")
 	}
 
+	return connFromResourceData("conn.0", ctx, d)
+}
+
+func connFromResourceData(prefix string, ctx context.Context, d *schema.ResourceData) (string, *ssh.ClientConfig, error) {
+	prefixKey := func(key string) string {
+		return fmt.Sprintf("%s.%s", prefix, key)
+	}
+
 	clientConfig := ssh.ClientConfig{
-		User:            d.Get("conn.0.user").(string),
+		User:            d.Get(prefixKey("user")).(string),
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 
-	password, ok := d.GetOk("conn.0.password")
+	password, ok := d.GetOk(prefixKey("password"))
 	if ok {
 		clientConfig.Auth = append(clientConfig.Auth, ssh.Password(password.(string)))
 	}
 
-	private_key, ok := d.GetOk("conn.0.private_key")
+	private_key, ok := d.GetOk(prefixKey("private_key"))
 	if ok {
 		signer, err := ssh.ParsePrivateKey([]byte(private_key.(string)))
 		if err != nil {
@@ -100,7 +108,7 @@ func ConnectionFromResourceData(ctx context.Context, d *schema.ResourceData) (st
 		clientConfig.Auth = append(clientConfig.Auth, ssh.PublicKeys(signer))
 	}
 
-	private_key_path, ok := d.GetOk("conn.0.private_key_path")
+	private_key_path, ok := d.GetOk(prefixKey("private_key_path"))
 	if ok {
 		content, err := ioutil.ReadFile(private_key_path.(string))
 		if err != nil {
@@ -113,7 +121,7 @@ func ConnectionFromResourceData(ctx context.Context, d *schema.ResourceData) (st
 		clientConfig.Auth = append(clientConfig.Auth, ssh.PublicKeys(signer))
 	}
 
-	private_key_env_var, ok := d.GetOk("conn.0.private_key_env_var")
+	private_key_env_var, ok := d.GetOk(prefixKey("private_key_env_var"))
 	if ok {
 		private_key := os.Getenv(private_key_env_var.(string))
 		signer, err := ssh.ParsePrivateKey([]byte(private_key))
@@ -123,7 +131,7 @@ func ConnectionFromResourceData(ctx context.Context, d *schema.ResourceData) (st
 		clientConfig.Auth = append(clientConfig.Auth, ssh.PublicKeys(signer))
 	}
 
-	enableAgent, ok := d.GetOk("conn.0.agent")
+	enableAgent, ok := d.GetOk(prefixKey("agent"))
 	if ok && enableAgent.(bool) {
 		connection, err := net.Dial("unix", os.Getenv("SSH_AUTH_SOCK"))
 		if err != nil {
@@ -132,11 +140,11 @@ func ConnectionFromResourceData(ctx context.Context, d *schema.ResourceData) (st
 		clientConfig.Auth = append(clientConfig.Auth, ssh.PublicKeysCallback(agent.NewClient(connection).Signers))
 	}
 
-	timeout, ok := d.GetOk("conn.0.timeout")
+	timeout, ok := d.GetOk(prefixKey("timeout"))
 	if ok {
 		clientConfig.Timeout = time.Duration(timeout.(int)) * time.Millisecond
 	}
 
-	host := fmt.Sprintf("%s:%d", d.Get("conn.0.host").(string), d.Get("conn.0.port").(int))
+	host := fmt.Sprintf("%s:%d", d.Get(prefixKey("host")).(string), d.Get(prefixKey("port")).(int))
 	return host, &clientConfig, nil
 }
