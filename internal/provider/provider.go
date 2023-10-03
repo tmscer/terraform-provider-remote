@@ -46,6 +46,14 @@ func New(version string) func() *schema.Provider {
 					Description: "Default connection to host where files are located. Can be overridden in resources and data sources.",
 					Elem:        connectionSchemaResource,
 				},
+				"proxy_conn": {
+					Type:        schema.TypeList,
+					MinItems:    0,
+					MaxItems:    1,
+					Optional:    true,
+					Description: "Connection to proxy host from which to start other connections. Cannot be overridden in resources and data sources.",
+					Elem:        connectionSchemaResource,
+				},
 				"max_sessions": {
 					Type:        schema.TypeInt,
 					Optional:    true,

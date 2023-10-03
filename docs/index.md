@@ -44,6 +44,12 @@ provider "remote" {
     password = "password"
     sudo     = true
   }
+
+  proxy_conn {
+    host     = "192.168.0.1"
+    user     = "gateway"
+    password = "password"
+  }
 }
 ```
 
