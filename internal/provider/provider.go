@@ -141,6 +141,16 @@ func remoteClientFromResourceData(ctx context.Context, d *schema.ResourceData) (
 	if err != nil {
 		return nil, err
 	}
+
+	proxyHost, proxyClientConfig, err := ProxyConnectionFromResourceData(ctx, d)
+	if err != nil {
+		return nil, err
+	}
+
+	if proxyHost != "" && proxyClientConfig != nil {
+		return NewRemoteProxyClient(host, clientConfig, proxyHost, proxyClientConfig)
+	}
+
 	return NewRemoteClient(host, clientConfig)
 }
 
