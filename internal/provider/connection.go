@@ -84,6 +84,16 @@ func ConnectionFromResourceData(ctx context.Context, d *schema.ResourceData) (st
 	return connFromResourceData("conn.0", ctx, d)
 }
 
+func ProxyConnectionFromResourceData(ctx context.Context, d *schema.ResourceData) (string, *ssh.ClientConfig, error) {
+	_, ok := d.GetOk("proxy_conn")
+	if !ok {
+		// Not having a proxy connection is alright
+		return "", nil, nil
+	}
+
+	return connFromResourceData("proxy_conn.0", ctx, d)
+}
+
 func connFromResourceData(prefix string, ctx context.Context, d *schema.ResourceData) (string, *ssh.ClientConfig, error) {
 	prefixKey := func(key string) string {
 		return fmt.Sprintf("%s.%s", prefix, key)

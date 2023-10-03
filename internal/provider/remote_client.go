@@ -312,6 +312,28 @@ func NewRemoteClient(host string, clientConfig *ssh.ClientConfig) (*RemoteClient
 	}, nil
 }
 
+func NewRemoteProxyClient(host string, clientConfig *ssh.ClientConfig, proxyHost string, proxyClientConfig *ssh.ClientConfig) (*RemoteClient, error) {
+	proxyClient, err := ssh.Dial("tcp", proxyHost, proxyClientConfig)
+	if err != nil {
+		return nil, fmt.Errorf("couldn't establish a connection to the remote server: %s", err.Error())
+	}
+
+	conn, err := proxyClient.Dial("tcp", host)
+	if err != nil {
+		return nil, fmt.Errorf("couldn't establish a connection to the remote server: %s", err.Error())
+	}
+
+	ncc, chans, reqs, err := ssh.NewClientConn(conn, host, clientConfig)
+	if err != nil {
+		return nil, err
+	}
+	client := ssh.NewClient(ncc, chans, reqs)
+
+	return &RemoteClient{
+		sshClient: client,
+	}, nil
+}
+
 func (c *RemoteClient) Close() error {
 	return c.sshClient.Close()
 }
