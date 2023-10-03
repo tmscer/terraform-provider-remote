@@ -193,3 +193,27 @@ func TestAccResourceRemoteFileOwnershipNames(t *testing.T) {
 		},
 	})
 }
+
+func TestAccResourceRemoteFileThroughProxy(t *testing.T) {
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: `
+				resource "remote_file" "resource_8" {
+					provider = remotehost-through-remotehost2
+
+					path = "/tmp/resource_8.txt"
+					content = "resource_8"
+					permissions = "0777"
+				}
+				`,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestMatchResourceAttr(
+						"remote_file.resource_8", "content", regexp.MustCompile("resource_8")),
+				),
+			},
+		},
+	})
+}
