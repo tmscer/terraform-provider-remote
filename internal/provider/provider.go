@@ -164,6 +164,14 @@ func setResourceID(d *schema.ResourceData, conn *schema.ResourceData) {
 		conn.Get("conn.0.host").(string),
 		conn.Get("conn.0.port").(int),
 		d.Get("path").(string))
+
+	proxy_host := resourceStringWithDefault(conn, "proxy_conn.0.host", "")
+	proxy_port := resourceIntWithDefault(conn, "proxy_conn.0.port", "")
+
+	if proxy_host != "" && proxy_port != "" {
+		id = fmt.Sprintf("%s:%s|%s", proxy_host, proxy_port, id)
+	}
+
 	d.SetId(id)
 }
 
@@ -176,7 +184,15 @@ func resourceConnectionHash(d *schema.ResourceData) string {
 		resourceStringWithDefault(d, "conn.0.private_key", ""),
 		resourceStringWithDefault(d, "conn.0.private_key_path", ""),
 		strconv.FormatBool(d.Get("conn.0.agent").(bool)),
+		resourceStringWithDefault(d, "proxy_conn.0.host", ""),
+		resourceStringWithDefault(d, "proxy_conn.0.user", ""),
+		resourceIntWithDefault(d, "proxy_conn.0.port", ""),
+		resourceStringWithDefault(d, "proxy_conn.0.password", ""),
+		resourceStringWithDefault(d, "proxy_conn.0.private_key", ""),
+		resourceStringWithDefault(d, "proxy_conn.0.private_key_path", ""),
+		resourceStringWithDefault(d, "proxy_conn.0.agent", ""),
 	}
+
 	return strings.Join(elements, "::")
 }
 
@@ -184,6 +200,14 @@ func resourceStringWithDefault(d *schema.ResourceData, key string, defaultValue 
 	str, ok := d.GetOk(key)
 	if ok {
 		return str.(string)
+	}
+	return defaultValue
+}
+
+func resourceIntWithDefault(d *schema.ResourceData, key string, defaultValue string) string {
+	integer, ok := d.GetOk(key)
+	if ok {
+		return strconv.Itoa(integer.(int))
 	}
 	return defaultValue
 }
