@@ -8,6 +8,7 @@ RUN apk add --no-cache \
         sudo \
     && ssh-keygen -A \
     && sed -i "s/#\?PermitRootLogin.*/PermitRootLogin yes/" /etc/ssh/sshd_config \
+    && sed -i "s/#\?AllowTcpForwarding.*/AllowTcpForwarding yes/" /etc/ssh/sshd_config \
     && cp /etc/ssh/sshd_config /etc/ssh/sshd_config_unexposed \
     && sed -i "s/^#\?Port.*/Port 1022/" /etc/ssh/sshd_config_unexposed \
     && adduser -D bob \
