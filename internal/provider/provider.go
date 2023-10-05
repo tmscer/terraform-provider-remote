@@ -200,7 +200,7 @@ func resourceConnectionHash(d *schema.ResourceData) string {
 		resourceStringWithDefault(d, "proxy_conn.0.password", ""),
 		resourceStringWithDefault(d, "proxy_conn.0.private_key", ""),
 		resourceStringWithDefault(d, "proxy_conn.0.private_key_path", ""),
-		resourceStringWithDefault(d, "proxy_conn.0.agent", ""),
+		resourceBoolWithDefault(d, "proxy_conn.0.agent", ""),
 	}
 
 	return strings.Join(elements, "::")
@@ -218,6 +218,14 @@ func resourceIntWithDefault(d *schema.ResourceData, key string, defaultValue str
 	integer, ok := d.GetOk(key)
 	if ok {
 		return strconv.Itoa(integer.(int))
+	}
+	return defaultValue
+}
+
+func resourceBoolWithDefault(d *schema.ResourceData, key string, defaultValue string) string {
+	boolean, ok := d.GetOk(key)
+	if ok {
+		return strconv.FormatBool(boolean.(bool))
 	}
 	return defaultValue
 }
