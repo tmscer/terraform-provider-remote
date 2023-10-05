@@ -76,7 +76,7 @@ jobs:
         with:
           context: tests
           push: true
-          tags: ghcr.io/tenstad/remotehost:${{ github.sha }}
+          tags: ghcr.io/tmscer/remotehost:${{ github.sha }}
 
   # run acceptance tests in a matrix with Terraform core versions
   test:
@@ -99,9 +99,9 @@ jobs:
           - '1.1.*'
     services:
       remotehost:
-        image: ghcr.io/tenstad/remotehost:${{ github.sha }}
+        image: ghcr.io/tmscer/remotehost:${{ github.sha }}
       remotehost2:
-        image: ghcr.io/tenstad/remotehost:${{ github.sha }}
+        image: ghcr.io/tmscer/remotehost:${{ github.sha }}
     container:
       image: golang:1.16
     steps:
