@@ -1,4 +1,4 @@
-module github.com/tenstad/terraform-provider-remote
+module github.com/tmscer/terraform-provider-remote
 
 go 1.16
 

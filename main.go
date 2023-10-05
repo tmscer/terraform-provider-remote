@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
-	"github.com/tenstad/terraform-provider-remote/internal/provider"
+	"github.com/tmscer/terraform-provider-remote/internal/provider"
 )
 
 // Run "go generate" to format example terraform files and generate the docs for the registry/website
@@ -37,7 +37,7 @@ func main() {
 	opts := &plugin.ServeOpts{ProviderFunc: provider.New(version)}
 
 	if debugMode {
-		err := plugin.Debug(context.Background(), "registry.terraform.io/tenstad/remote", opts)
+		err := plugin.Debug(context.Background(), "registry.terraform.io/tmscer/remote", opts)
 		if err != nil {
 			log.Fatal(err.Error())
 		}

@@ -1,6 +1,8 @@
+Forked from [tenstad/terraform-provider-remote](https://github.com/tenstad/terraform-provider-remote) to add proxy jump capability.
+
 # Terraform Provider Remote
 
-**Documentation**: https://registry.terraform.io/providers/tenstad/remote/latest/docs/resources/file
+**Documentation**: https://registry.terraform.io/providers/tmscer/remote/latest/docs/resources/file
 
 ## Issues
 

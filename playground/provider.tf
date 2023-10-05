@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     remote = {
-      source  = "tenstad/remote"
+      source  = "tmscer/remote"
       version = "99.0.0"
     }
   }

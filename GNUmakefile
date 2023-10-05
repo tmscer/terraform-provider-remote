@@ -24,7 +24,7 @@ test: hosts
 # Install provider in playground
 INSTALL_DIR=playground
 TARGET_ARCH=$(shell go env GOOS)_$(shell go env GOARCH)
-PROVIDER_PATH=.terraform/providers/registry.terraform.io/tenstad/remote/99.0.0/$(TARGET_ARCH)
+PROVIDER_PATH=.terraform/providers/registry.terraform.io/tmscer/remote/99.0.0/$(TARGET_ARCH)
 BIN_PATH=$(INSTALL_DIR)/$(PROVIDER_PATH)/terraform-provider-remote_v99.0.0
 install:
 	mkdir -p $(INSTALL_DIR)/$(PROVIDER_PATH)
