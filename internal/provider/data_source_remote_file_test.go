@@ -179,3 +179,40 @@ func TestAccDataSourceRemoteFilePrivateKeyPath(t *testing.T) {
 		},
 	})
 }
+
+func TestAccDataSourceRemoteFileThroughProxy(t *testing.T) {
+	resource.UnitTest(t, resource.TestCase{
+		PreCheck: func() {
+			testAccPreCheck(t)
+			writeFileToHost("remotehost:22", "/tmp/data_1.txt", "data_1", "root", "bob")
+		},
+		ProviderFactories: providerFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: `
+				data "remote_file" "proxy_data_1" {
+					provider = remotehost-through-remotehost2
+
+					path = "/tmp/data_1.txt"
+				}
+				`,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestMatchResourceAttr(
+						"data.remote_file.proxy_data_1", "id", regexp.MustCompile("remotehost2:22|remotehost:1022:/tmp/data_1.txt")),
+					resource.TestMatchResourceAttr(
+						"data.remote_file.proxy_data_1", "content", regexp.MustCompile("data_1")),
+					resource.TestMatchResourceAttr(
+						"data.remote_file.proxy_data_1", "permissions", regexp.MustCompile("0644")),
+					resource.TestMatchResourceAttr(
+						"data.remote_file.proxy_data_1", "owner", regexp.MustCompile("1000")),
+					resource.TestMatchResourceAttr(
+						"data.remote_file.proxy_data_1", "group", regexp.MustCompile("0")),
+					resource.TestMatchResourceAttr(
+						"data.remote_file.proxy_data_1", "owner_name", regexp.MustCompile("bob")),
+					resource.TestMatchResourceAttr(
+						"data.remote_file.proxy_data_1", "group_name", regexp.MustCompile("root")),
+				),
+			},
+		},
+	})
+}
